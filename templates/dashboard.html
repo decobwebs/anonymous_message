@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         /* Dynamic Gradient Background */
@@ -27,6 +27,7 @@
         .container {
             position: relative;
             z-index: 2;
+            color: #fff;
         }
 
         /* Card Styles */
@@ -62,7 +63,6 @@
             100% { transform: translateX(100%); }
         }
 
-        /* Text and button styling */
         .card-text {
             font-size: 1.2rem;
             color: #333;
@@ -89,13 +89,77 @@
         .btn-secondary:hover {
             background: #5a6268;
         }
+
+        /* Display the user's unique URL */
+        .unique-url {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .unique-url a {
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+            word-wrap: break-word;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .unique-url a:hover {
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+
+        .copy-btn:focus {
+            outline: none;
+        }
+
+        .copy-btn:active {
+            background-color: #1e7e34;
+        }
+
+        .copy-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4 text-center" style="color: #333; font-size: 2.5rem; font-weight: bold;">Admin Dashboard</h1>
+        <h1 class="mb-4 text-center" style="font-size: 2.5rem; font-weight: bold;">Welcome, {{ session['user_name'] }}!</h1>
+
+        <!-- User's Unique URL Section -->
+        <div class="unique-url">
+            <h3>Your Unique URL:</h3>
+            <p>
+                <a href="{{ url_for('message', unique_link=session['unique_link']) }}" target="_blank">
+                    {{ url_for('message', unique_link=session['unique_link'], _external=True) }}
+                </a>
+            </p>
+            <button class="copy-btn" id="copyButton" data-clipboard-text="{{ url_for('message', unique_link=session['unique_link'], _external=True) }}">
+                Copy URL
+            </button>
+            <p class="text-muted">Share this link with others so they can leave you anonymous messages.</p>
+        </div>
 
         <div class="row gy-4 justify-content-center">
+            <!-- Messages Section -->
             {% for message in messages %}
             <div class="col-md-6 d-flex justify-content-center">
                 <div class="card" style="width: 90%;">
@@ -123,19 +187,15 @@
     </div>
 
     <script>
-        /* Shimmer Effect Animation */
-        const style = document.createElement("style");
-        style.textContent = `
-            @keyframes shimmer {
-                0% { transform: translateX(-100%); }
-                100% { transform: translateX(100%); }
-            }
-            .card:hover {
-                transform: translateY(-10px);
-                box-shadow: 15px 15px 30px #bebebe, -15px -15px 30px #ffffff;
-            }
-        `;
-        document.head.appendChild(style);
+        // JavaScript to handle copying URL to clipboard
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const url = this.getAttribute('data-clipboard-text');
+            navigator.clipboard.writeText(url).then(function() {
+                alert('URL copied to clipboard!');
+            }).catch(function(err) {
+                alert('Failed to copy URL: ' + err);
+            });
+        });
     </script>
 </body>
 </html>

@@ -117,6 +117,7 @@ def message(unique_link):
 
     return render_template('message.html', user=user)
 
+
 # Admin Dashboard Route
 # Admin Dashboard Route
 @app.route('/admin')
