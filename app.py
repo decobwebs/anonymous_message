@@ -4,7 +4,7 @@ import hashlib
 import os
 import uuid
 from dotenv import load_dotenv
-from flask_cors import CORS
+
 
 
 load_dotenv()
@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-CORS(app)
+
 # User Model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
