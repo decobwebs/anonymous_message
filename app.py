@@ -4,6 +4,9 @@ import hashlib
 import os
 import uuid
 from dotenv import load_dotenv
+from flask_cors import CORS
+
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -14,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
+CORS(app)
 # User Model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -105,18 +108,22 @@ def message(unique_link):
     user = User.query.filter_by(unique_link=unique_link).first()
 
     if not user:
-        return 'User not found', 404
+        return render_template('404.html', error="User not found"), 404
+
+    message_sent = False
 
     if request.method == 'POST':
-        message_content = request.form['message']
-        message = Message(message_content=message_content, user_id=user.id, sender=None)
-        db.session.add(message)
-        db.session.commit()
+        message_content = request.form.get('message')
+        if not message_content:
+            flash('Message content cannot be empty.', 'danger')
+        else:
+            # Save the message
+            message = Message(message_content=message_content, user_id=user.id, sender=None)
+            db.session.add(message)
+            db.session.commit()
+            message_sent = True
 
-        flash('Message sent anonymously.', 'success')
-
-    return render_template('message.html', user=user)
-
+    return render_template('message.html', user=user, unique_link=unique_link, message_sent=message_sent)
 
 # Admin Dashboard Route
 # Admin Dashboard Route

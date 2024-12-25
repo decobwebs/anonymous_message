@@ -32,48 +32,61 @@
 
         /* Card Styles */
         .card {
-            background: #e0e5ec;
+            background: rgba(255, 255, 255, 0.2); /* Transparent card for blending */
             border-radius: 15px;
-            box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Soft border for definition */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             padding: 20px;
-            position: relative;
             overflow: hidden;
+            position: relative;
+            text-align: center; /* Center-align the content */
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 15px 15px 30px #bebebe, -15px -15px 30px #ffffff;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3); /* Elevated shadow on hover */
         }
 
-        .shimmer {
+        .card .card-text {
+            font-size: 1.4rem;
+            color: #fff; /* White text for high contrast */
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card .text-muted {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7); /* Softer white for metadata */
+            margin-top: 10px;
+        }
+
+        .card .quote-icon {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.8); /* Subtle icon color */
+            margin-bottom: 10px;
+        }
+
+        .card .shimmer {
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.05);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
             animation: shimmer 2s infinite linear;
-            z-index: 1;
         }
 
-        /* Shimmer Effect Animation */
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .card-text {
-            font-size: 1.2rem;
-            color: #333;
-            font-weight: 500;
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        .text-muted {
-            font-size: 0.9rem;
-            margin-top: 10px;
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .btn-secondary {
@@ -145,34 +158,43 @@
         <h1 class="mb-4 text-center" style="font-size: 2.5rem; font-weight: bold;">Welcome, {{ session['user_name'] }}!</h1>
 
         <!-- User's Unique URL Section -->
-        <div class="unique-url">
-            <h3>Your Unique URL:</h3>
-            <p>
-                <a href="{{ url_for('message', unique_link=session['unique_link']) }}" target="_blank">
-                    {{ url_for('message', unique_link=session['unique_link'], _external=True) }}
-                </a>
-            </p>
-            <button class="copy-btn" id="copyButton" data-clipboard-text="{{ url_for('message', unique_link=session['unique_link'], _external=True) }}">
-                Copy URL
-            </button>
-            <p class="text-muted">Share this link with others so they can leave you anonymous messages.</p>
-        </div>
+        <div class="unique-url text-center">
+    <h3 style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;">Your Unique URL</h3>
+    <div style="background: rgba(255, 255, 255, 0.2); padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); display: inline-block; max-width: 100%; overflow-wrap: break-word;">
+        <a href="{{ url_for('message', unique_link=session['unique_link']) }}"
+           target="_blank"
+           style="color: #fff; font-size: 1rem; text-decoration: none; word-break: break-word;">
+           {{ url_for('message', unique_link=session['unique_link'], _external=True) }}
+        </a>
+    </div>
+    <button class="copy-btn mt-3"
+            id="copyButton"
+            data-clipboard-text="{{ url_for('message', unique_link=session['unique_link'], _external=True) }}"
+            style="padding: 10px 20px; background-color: #4caf50; color: white; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;">
+        Copy URL
+    </button>
+    <p class="text-muted mt-2" style="font-size: 0.9rem; line-height: 1.4; color: rgba(255, 255, 255, 0.8);">
+        Share this link with others to receive anonymous messages.
+    </p>
+</div>
+
 
         <div class="row gy-4 justify-content-center">
             <!-- Messages Section -->
             {% for message in messages %}
             <div class="col-md-6 d-flex justify-content-center">
                 <div class="card" style="width: 90%;">
-                    <!-- Live Animation -->
+                    <!-- Shimmer Effect -->
                     <div class="shimmer"></div>
+
+                    <!-- Quote Icon -->
+                    <div class="quote-icon">❝</div>
 
                     <div class="card-body">
                         <p class="card-text">
                             "{{ message.message_content }}"
                         </p>
-                        <p class="text-muted text-end">
-                            Sent on: {{ message.sent_date }}
-                        </p>
+
                     </div>
                 </div>
             </div>

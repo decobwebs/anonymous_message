@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Welcome | Anonymous Messaging</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to Anonymous Messaging</h1>
-        <button onclick="window.location.href='/signup'">Sign Up</button>
-        <button onclick="window.location.href='/login'">Login</button>
-    </div>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Welcome to <span class="highlight">Anonymous Messaging</span></h1>
+            <p>Connect freely and securely. Sign up to start messaging anonymously or log in to continue the conversation.</p>
+            <div class="button-group">
+                <button class="btn-primary" onclick="window.location.href='/signup'">Sign Up</button>
+                <button class="btn-secondary" onclick="window.location.href='/login'">Login</button>
+            </div>
+        </div>
+    </header>
     <script src="/static/js/script.js"></script>
 </body>
 </html>
