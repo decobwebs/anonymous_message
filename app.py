@@ -5,14 +5,13 @@ import os
 import uuid
 from dotenv import load_dotenv
 
-
-
+# Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 
-# Use PostgreSQL connection string from Render
+# Use PostgreSQL connection string from the .env file
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -34,7 +33,7 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('messages', lazy=True))
 
-# Initialize Database
+# Initialize Database (Create tables if they don't exist)
 with app.app_context():
     db.create_all()
 
@@ -83,7 +82,6 @@ def login():
 
     return render_template('login.html')
 
-# Dashboard Route (for users to get the unique link)
 # Dashboard Route (for users to see their unique link and messages)
 @app.route('/dashboard')
 def dashboard():
@@ -100,7 +98,6 @@ def dashboard():
     messages = Message.query.filter_by(user_id=user_id).all()
 
     return render_template('dashboard.html', unique_link=user.unique_link, messages=messages)
-
 
 # Anonymous Message Route
 @app.route('/message/<string:unique_link>', methods=['GET', 'POST'])
@@ -126,7 +123,6 @@ def message(unique_link):
     return render_template('message.html', user=user, unique_link=unique_link, message_sent=message_sent)
 
 # Admin Dashboard Route
-# Admin Dashboard Route
 @app.route('/admin')
 def admin_dashboard():
     if 'admin' not in session:
@@ -136,8 +132,6 @@ def admin_dashboard():
     messages = Message.query.all()
     return render_template('admin_dashboard.html', messages=messages)
 
-
-# Admin Login Route
 # Admin Login Route
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -150,7 +144,6 @@ def admin_login():
         flash('Invalid admin password.', 'danger')
 
     return render_template('admin_login.html')
-
 
 # Delete Message Route (for Admin)
 @app.route('/admin/delete/<int:id>', methods=['POST'])
